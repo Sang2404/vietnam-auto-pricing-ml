@@ -1,296 +1,288 @@
-# 🚗 Ứng Dụng Dự Đoán Giá Xe Ô Tô Cũ - Báo Cáo Học Máy
+# 🚗 Dự Đoán Giá Xe Ô Tô Cũ - Machine Learning Project
 
-## 📊 Tổng Quan Dự Án
-
-Xây dựng mô hình Machine Learning dự đoán giá xe ô tô cũ tại Việt Nam (2016-2026) dựa trên các đặc trưng: hãng xe, dòng xe, năm sản xuất, phiên bản, màu sắc, và công tơ mét.
-
-**Dataset:** 10.000 dòng dữ liệu từ 11 hãng xe phổ biến
-**Mô hình:** Random Forest Regressor
-**Kết quả:** R² Score = 0.9978, MAPE = 1.63%
-
----
-
-## 🔄 QUY TRÌNH XỬ LÝ DỮ LIỆU
-
-### **BƯỚC 1: SINH DỮ LIỆU (generate_xe_cu_data.py)**
-
-#### 1.1 Xây Dựng Dictionary Car_DB
-- **Dữ liệu:** 11 hãng xe × 50+ dòng xe × 2-3 phiên bản
-- **Hãng xe:** Toyota, Honda, Mazda, Mitsubishi, Hyundai, Kia, Ford, VinFast, Mercedes-Benz, BMW, Lexus
-- **Giá gốc:** Niêm yết từ thị trường Việt Nam (280 triệu - 2.85 tỷ VNĐ)
-
-#### 1.2 Thuật Toán Tính Giá Xe Cũ
-```
-Giá xe cũ = Giá gốc × (1 - Hệ số khấu hao)^Tuổi xe - Bù/trừ ODO + Biến động ngẫu nhiên
-```
-
-**Hệ số khấu hao theo hãng xe (% mất giá/năm):**
-- Xe Nhật (Toyota, Honda, Lexus): 6-7%/năm (giữ giá tốt nhất)
-- Xe Nhật khác (Mazda, Mitsubishi): 7-8%/năm
-- Xe Hàn/Mỹ/Châu Âu phổ thông (Hyundai, Kia, Ford): 8-10%/năm
-- Xe Việt Nam (VinFast): 10-13%/năm
-- Xe Sang Đức (Mercedes, BMW): 10-12%/năm
-
-**Bù/trừ giá dựa trên ODO:**
-- Mức tiêu chuẩn: 15.000 km/năm
-- Công thức: Mỗi 1.000 km chênh lệch = ±0.5% giá trị xe
-- Xe 2025-2026 (lướt): ODO < 20.000 km
-
-**Biến động ngẫu nhiên:** ±3% để mô phỏng thị trường thực tế
-
-#### 1.3 Đầu Ra
-- File `xe_cu.csv`: 10.000 dòng × 7 cột
-- Cột: Hãng xe, Dòng xe, Đời xe, Phiên bản, Màu xe, Công tơ mét (km), Giá (VNĐ)
+## � Mục Lục
+1. [Giới Thiệu](#giới-thiệu)
+2. [Vấn Đề & Mục Tiêu](#vấn-đề--mục-tiêu)
+3. [Dữ Liệu](#dữ-liệu)
+4. [Phương Pháp](#phương-pháp)
+5. [Kết Quả](#kết-quả)
+6. [Cài Đặt & Chạy](#cài-đặt--chạy)
+7. [Cấu Trúc Dự Án](#cấu-trúc-dự-án)
 
 ---
 
-### **BƯỚC 2: TIỀN XỬ LÝ DỮ LIỆU (train_model.py)**
+## 🎯 Giới Thiệu
 
-#### 2.1 Xử Lý Giá Trị Trống (Missing Values)
-```
-Cột "Màu xe": 476 giá trị trống (4.76%)
-Phương pháp: Điền bằng Mode (giá trị xuất hiện nhiều nhất) = "Trắng"
-Kết quả: 10.000 dòng → 10.000 dòng (không mất dữ liệu)
-```
+Dự án này xây dựng một ứng dụng web dự đoán giá xe ô tô cũ sử dụng **Machine Learning**.
 
-#### 2.2 Mã Hóa Dữ Liệu Dạng Chữ (Categorical Encoding)
-**Phương pháp:** Label Encoding
-
-| Cột | Số giá trị | Ví dụ |
-|-----|-----------|-------|
-| Hãng xe | 11 | Toyota→1, Honda→2, ... |
-| Dòng xe | 50+ | Vios→1, Camry→2, ... |
-| Phiên bản | 100+ | "Toyota Vios 1.5E MT"→1, ... |
-| Màu xe | 8 | Trắng→1, Đen→2, ... |
-
-**Lý do chọn Label Encoding:**
-- Dữ liệu có thứ tự tự nhiên (hãng xe, dòng xe)
-- Giảm chiều dữ liệu so với One-Hot Encoding
-- Phù hợp với Random Forest (không nhạy cảm với thứ tự)
-
-#### 2.3 Chuẩn Hóa Dữ Liệu (Normalization)
-- **Không chuẩn hóa** vì Random Forest không nhạy cảm với tỷ lệ đặc trưng
-- Giữ nguyên giá trị gốc để dễ diễn giải
-
-#### 2.4 Chia Tập Dữ Liệu (Train-Test Split)
-```
-Tổng dữ liệu: 10.000 dòng
-├─ Tập Train: 8.000 dòng (80%)
-└─ Tập Test: 2.000 dòng (20%)
-
-Phương pháp: train_test_split(test_size=0.2, random_state=42)
-- random_state=42: Đảm bảo kết quả lặp lại
-- Tỷ lệ 80-20: Chuẩn trong ML
-```
-
-#### 2.5 Đầu Ra Tiền Xử Lý
-- Dữ liệu đã mã hóa: 10.000 × 6 features
-- Features: [Hãng xe, Dòng xe, Đời xe, Phiên bản, Màu xe, Công tơ mét]
-- Target: Giá (VNĐ)
+**Mục đích:** Giúp người dùng ước tính giá trị hiện tại của xe ô tô cũ dựa trên các đặc trưng như:
+- Hãng xe
+- Dòng xe
+- Năm sản xuất
+- Phiên bản
+- Màu sắc
+- Số km đã chạy
 
 ---
 
-### **BƯỚC 3: HUẤN LUYỆN MÔ HÌNH (train_model.py)**
+## 🔍 Vấn Đề & Mục Tiêu
 
-#### 3.1 Lựa Chọn Thuật Toán: Random Forest Regressor
+### Vấn Đề
+- Người mua/bán xe cũ khó xác định giá trị thực của xe
+- Không có công cụ tiêu chuẩn để dự đoán giá xe cũ
+- Giá xe phụ thuộc vào nhiều yếu tố phức tạp
 
-**Tại sao Random Forest?**
-- Xử lý tốt dữ liệu hỗn hợp (số và phân loại)
-- Không nhạy cảm với outliers
-- Tự động tìm tương tác giữa features
-- Cung cấp feature importance
-- Hiệu suất cao trên dữ liệu lớn
+### Mục Tiêu
+- ✅ Xây dựng mô hình dự đoán giá xe chính xác
+- ✅ So sánh 3 thuật toán Machine Learning
+- ✅ Tạo giao diện web thân thiện cho người dùng
+- ✅ Đạt độ chính xác cao (R² > 0.99)
 
-#### 3.2 Cấu Hình Mô Hình
+---
+
+## 📊 Dữ Liệu
+
+### Nguồn Dữ Liệu
+- File: `xe_cu.csv`
+- Tổng số mẫu: **9,999 xe**
+
+### Các Đặc Trưng (Features)
+| Đặc Trưng | Kiểu Dữ Liệu | Mô Tả |
+|---|---|---|
+| Hãng xe | Categorical | 11 hãng xe khác nhau |
+| Dòng xe | Categorical | 78 dòng xe |
+| Đời xe | Numerical | Năm sản xuất |
+| Phiên bản | Categorical | 163 phiên bản |
+| Màu xe | Categorical | 8 màu sắc |
+| Công tơ mét (km) | Numerical | Số km đã chạy |
+| **Giá (VNĐ)** | **Numerical** | **Target - Giá xe** |
+
+### Chia Tập Dữ Liệu
+- **Train:** 7,999 mẫu (80%)
+- **Test:** 2,000 mẫu (20%)
+
+---
+
+## 🤖 Phương Pháp
+
+### Quy Trình Xử Lý Dữ Liệu
+1. **Đọc dữ liệu** từ CSV
+2. **Xử lý giá trị trống** (fillna, dropna)
+3. **Mã hóa dữ liệu** (Label Encoding cho dữ liệu categorical)
+4. **Chia tập dữ liệu** (80/20 split)
+
+### 3 Thuật Toán So Sánh
+
+#### 1️⃣ Random Forest Regressor
 ```python
 RandomForestRegressor(
-    n_estimators=100,      # Số cây trong rừng
-    max_depth=20,          # Độ sâu tối đa mỗi cây
-    min_samples_split=5,   # Số mẫu tối thiểu để chia node
-    min_samples_leaf=2,    # Số mẫu tối thiểu ở leaf node
-    random_state=42,       # Tái tạo kết quả
-    n_jobs=-1              # Sử dụng tất cả CPU cores
+    n_estimators=100,
+    max_depth=20,
+    min_samples_split=5,
+    min_samples_leaf=2
 )
 ```
 
-**Giải thích tham số:**
-- `n_estimators=100`: Cân bằng giữa độ chính xác và tốc độ
-- `max_depth=20`: Tránh overfitting nhưng đủ sâu để học
-- `min_samples_split=5`: Tránh cây quá chi tiết
-- `min_samples_leaf=2`: Đảm bảo leaf nodes có ít nhất 2 mẫu
-
-#### 3.3 Quá Trình Huấn Luyện
-```
-Input: X_train (8.000 × 6), y_train (8.000,)
-↓
-Xây dựng 100 cây quyết định (Decision Trees)
-- Mỗi cây được huấn luyện trên random subset của dữ liệu
-- Mỗi node tìm feature và threshold tốt nhất để chia dữ liệu
-- Giảm MSE (Mean Squared Error) tại mỗi bước
-↓
-Output: Mô hình Random Forest đã huấn luyện
+#### 2️⃣ Gradient Boosting Regressor
+```python
+GradientBoostingRegressor(
+    n_estimators=100,
+    learning_rate=0.1,
+    max_depth=5
+)
 ```
 
-#### 3.4 Feature Importance (Tầm Quan Trọng Đặc Trưng)
-```
-Phiên bản:        34.35% (Quan trọng nhất)
-Công tơ mét:      23.60%
-Hãng xe:          19.78%
-Đời xe:           13.03%
-Dòng xe:           9.21%
-Màu xe:            0.02% (Ít quan trọng)
+#### 3️⃣ XGBoost Regressor
+```python
+XGBRegressor(
+    n_estimators=100,
+    learning_rate=0.1,
+    max_depth=5
+)
 ```
 
-**Giải thích:**
-- Phiên bản quyết định giá nhất (động cơ, trang bị)
-- Công tơ mét ảnh hưởng lớn (tình trạng xe)
-- Hãng xe ảnh hưởng đáng kể (thương hiệu, độ tin cậy)
-- Màu sắc ít ảnh hưởng đến giá
+### Chỉ Số Đánh Giá
+
+**R² Score (Coefficient of Determination)**
+- Công thức: R² = 1 - (SS_res / SS_tot)
+- Giá trị: 0 đến 1
+- Ý nghĩa: Tỷ lệ phương sai được giải thích
+
+**MAE (Mean Absolute Error)**
+- Công thức: MAE = (1/n) × Σ|y_i - ŷ_i|
+- Đơn vị: VNĐ
+- Ý nghĩa: Sai số trung bình tuyệt đối
+
+**MAPE (Mean Absolute Percentage Error)**
+- Công thức: MAPE = (1/n) × Σ|((y_i - ŷ_i) / y_i) × 100|
+- Đơn vị: %
+- Ý nghĩa: Sai số phần trăm trung bình
 
 ---
 
-### **BƯỚC 4: ĐÁNH GIÁ MÔ HÌNH (train_model.py)**
+## 📈 Kết Quả
 
-#### 4.1 Chỉ Số Đánh Giá
+### So Sánh 3 Thuật Toán
 
-**Trên Tập Train (8.000 mẫu):**
-```
-R² Score = 0.9991
-MAE = 5,267,037 VNĐ
-```
+| Thuật Toán | R² (Test) | MAE (Test) | MAPE | Xếp Hạng |
+|---|---|---|---|---|
+| **Random Forest** | **0.9935** | **26,672,702 VNĐ** | **4.44%** | 🥇 |
+| XGBoost | 0.9818 | 47,023,370 VNĐ | 8.29% | 🥈 |
+| Gradient Boosting | 0.9812 | 47,430,914 VNĐ | 8.40% | 🥉 |
 
-**Trên Tập Test (2.000 mẫu):**
-```
-R² Score = 0.9978
-MAE = 8,590,610 VNĐ
-MAPE = 1.63%
-```
+### 🏆 Model Tốt Nhất: Random Forest
 
-#### 4.2 Công Thức Chỉ Số
+**Hiệu Suất:**
+- R² Score: **0.9935** (99.35% chính xác)
+- MAE: **26.7 triệu đồng**
+- MAPE: **4.44%**
 
-**R² Score (Coefficient of Determination):**
-```
-R² = 1 - (SS_res / SS_tot)
-   = 1 - (Σ(y_true - y_pred)² / Σ(y_true - y_mean)²)
+**Ý Nghĩa:**
+- Giải thích 99.35% phương sai của giá xe
+- Sai số trung bình chỉ 26.7 triệu đồng
+- Độ chính xác 95.56%
 
-Ý nghĩa: 0.9978 = Mô hình giải thích 99.78% phương sai giá
-Phạm vi: [0, 1], càng gần 1 càng tốt
-```
-
-**MAE (Mean Absolute Error):**
-```
-MAE = (1/n) × Σ|y_true - y_pred|
-    = 8,590,610 VNĐ
-
-Ý nghĩa: Trung bình sai số tuyệt đối ~8.6 triệu VNĐ
-```
-
-**MAPE (Mean Absolute Percentage Error):**
-```
-MAPE = (1/n) × Σ|((y_true - y_pred) / y_true) × 100%|
-     = 1.63%
-
-Ý nghĩa: Trung bình sai số phần trăm ~1.63%
-Phạm vi: [0%, ∞), < 5% là rất tốt
-```
-
-#### 4.3 Phân Tích Kết Quả
-- **Không overfitting:** R² train (0.9991) ≈ R² test (0.9978)
-- **Độ chính xác cao:** MAPE = 1.63% < 5% (tiêu chuẩn tốt)
-- **Sai số nhỏ:** MAE = 8.6 triệu VNĐ (< 2% giá trung bình)
-
----
-
-### **BƯỚC 5: LƯU MÔ HÌ NH VÀ ARTIFACTS**
+### Biểu Đồ So Sánh
 
 ```
-model.pkl                  → Mô hình Random Forest
-encoders.pkl              → 4 bộ Label Encoder
-feature_columns.pkl       → Danh sách 6 features
-processed_data_raw.pkl    → Dữ liệu gốc đã xử lý
-training_info.pkl         → Thông tin huấn luyện (R², MAE, MAPE)
+R² Score (Test)
+Random Forest:      ████████████████████ 0.9935 ⭐
+XGBoost:            ███████████████████ 0.9818
+Gradient Boosting:  ███████████████████ 0.9812
+
+MAE (Test) - Càng thấp càng tốt
+Random Forest:      ██████ 26.7M VNĐ ⭐
+XGBoost:            ███████████ 47.0M VNĐ
+Gradient Boosting:  ███████████ 47.4M VNĐ
 ```
 
 ---
 
-## 🎯 THUẬT TOÁN DÙNG TRONG DỰ ĐOÁN
+## 🚀 Cài Đặt & Chạy
 
-### **Quy Trình Dự Đoán (app.py)**
+### Yêu Cầu
+- Python 3.8+
+- pip
 
-```
-Input: Thông tin xe từ người dùng
-├─ Hãng xe: "Toyota"
-├─ Dòng xe: "Vios"
-├─ Đời xe: 2020
-├─ Phiên bản: "Toyota Vios 1.5E CVT"
-├─ Màu xe: "Trắng"
-└─ Công tơ mét: 50.000 km
-
-↓ Mã hóa dữ liệu (Label Encoding)
-
-Dữ liệu mã hóa: [1, 1, 2020, 5, 1, 50000]
-
-↓ Dự đoán (Random Forest)
-
-Mô hình chạy 100 cây quyết định:
-- Mỗi cây dự đoán giá
-- Lấy trung bình 100 dự đoán
-
-↓ Output
-
-Giá dự đoán: 420,000,000 VNĐ
-Làm tròn: 420 triệu VNĐ
-```
-
----
-
-## 📈 HIỆU SUẤT MÔ HÌNH
-
-| Chỉ Số | Giá Trị | Đánh Giá |
-|--------|--------|---------|
-| R² Score (Test) | 0.9978 | Xuất sắc |
-| MAPE (Test) | 1.63% | Rất tốt |
-| MAE (Test) | 8.6M VNĐ | Tốt |
-| Overfitting | Không | Mô hình ổn định |
-
----
-
-## 🔧 CÔNG NGHỆ SỬ DỤNG
-
-- **Python 3.11**
-- **scikit-learn:** Random Forest, Label Encoding, train_test_split
-- **pandas:** Xử lý dữ liệu
-- **numpy:** Tính toán số học
-- **joblib:** Lưu/load mô hình
-- **Streamlit:** Giao diện web
-
----
-
-## 📝 DANH SÁCH FILE
-
-| File | Mục Đích |
-|------|----------|
-| `generate_xe_cu_data.py` | Sinh 10.000 dòng dữ liệu |
-| `train_model.py` | Huấn luyện mô hình |
-| `app.py` | Giao diện web dự đoán |
-| `xe_cu.csv` | Dữ liệu thô |
-| `model.pkl` | Mô hình đã huấn luyện |
-| `encoders.pkl` | Bộ encoder |
-| `training_info.pkl` | Thông tin huấn luyện |
-
----
-
-## 🚀 CÁCH CHẠY
-
+### Bước 1: Cài Đặt Dependencies
 ```bash
-# Bước 1: Sinh dữ liệu
-python generate_xe_cu_data.py
+pip install -r requirements.txt
+```
 
-# Bước 2: Huấn luyện mô hình
+### Bước 2: Huấn Luyện Mô Hình
+```bash
 python train_model.py
+```
 
-# Bước 3: Chạy ứng dụng web
+**Output:**
+- `models.pkl` - 3 mô hình
+- `best_model_name.pkl` - Tên model tốt nhất
+- `models_performance.pkl` - Hiệu suất 3 model
+- `encoders.pkl` - Bộ encoder
+- `feature_columns.pkl` - Danh sách features
+- `processed_data_raw.pkl` - Dữ liệu gốc
+- `training_info.pkl` - Thông tin huấn luyện
+
+### Bước 3: Chạy Ứng Dụng Web
+```bash
 streamlit run app.py
 ```
 
-Truy cập: http://localhost:8501
+**Truy cập:** http://localhost:8501
+
+---
+
+## 📁 Cấu Trúc Dự Án
+
+```
+vietnam-auto-pricing-ml/
+├── 📄 README.md                    # Tài liệu này
+├── 📄 requirements.txt             # Dependencies
+│
+├── 🐍 Python Scripts
+│   ├── train_model.py              # Huấn luyện 3 model
+│   ├── app.py                      # Ứng dụng Streamlit
+│   └── generate_xe_cu_data.py      # Tạo dữ liệu
+│
+├── 📊 Dữ Liệu
+│   └── xe_cu.csv                   # Dữ liệu gốc (9,999 xe)
+│
+└── 💾 Mô Hình & Encoder
+    ├── models.pkl                  # 3 mô hình
+    ├── best_model_name.pkl         # Tên model tốt nhất
+    ├── models_performance.pkl      # Hiệu suất 3 model
+    ├── encoders.pkl                # Bộ encoder
+    ├── feature_columns.pkl         # Danh sách features
+    ├── processed_data_raw.pkl      # Dữ liệu gốc
+    └── training_info.pkl           # Thông tin huấn luyện
+```
+
+---
+
+## 💡 Tính Năng Chính
+
+### 1. Giao Diện Web Premium
+- ✅ Thiết kế hiện đại, thân thiện
+- ✅ Responsive design
+- ✅ Màu sắc xanh dương chuyên nghiệp
+
+### 2. Dự Đoán Giá Xe
+- ✅ Nhập 6 thông tin xe
+- ✅ Dự đoán tức thì
+- ✅ Hiển thị kết quả từ model tốt nhất
+
+### 3. Phân Tích Mô Hình
+- ✅ Tab "Phân tích mô hình": Hiển thị R² của 3 model
+- ✅ Tab "Bảng chi tiết": So sánh đầy đủ
+
+### 4. Empty State
+- ✅ Hướng dẫn nhẹ nhàng khi chưa dự đoán
+
+---
+
+## � Ví Dụ Sử Dụng
+
+### Dự Đoán Giá Toyota Camry 2020
+
+**Nhập thông tin:**
+- Hãng xe: Toyota
+- Dòng xe: Camry
+- Đời xe: 2020
+- Phiên bản: 2.5L
+- Màu xe: Trắng
+- Công tơ mét: 50,000 km
+
+**Kết quả:**
+- Giá dự đoán: **1,200,000,000 VNĐ** (1.2 tỷ)
+- Thuật toán: Random Forest
+- Độ tin cậy: 99.35%
+
+---
+
+## 🎓 Kết Luận
+
+### Điểm Mạnh
+- ✅ So sánh 3 thuật toán khác nhau
+- ✅ Chọn model tốt nhất tự động
+- ✅ Hiệu suất rất cao (R² = 0.9935)
+- ✅ Giao diện web đẹp và dễ sử dụng
+- ✅ Tài liệu đầy đủ
+
+### Cải Tiến Tương Lai
+- 🔄 Thêm các model khác (LightGBM, CatBoost)
+- 🔄 Thêm cross-validation
+- 🔄 Hiển thị feature importance
+- 🔄 Thêm prediction intervals
+- 🔄 Lưu lịch sử dự đoán
+
+---
+
+## 👨‍� Tác Giả
+Dự án Machine Learning - Năm 4, HK2
+
+## 📞 Liên Hệ
+Nếu có câu hỏi, vui lòng liên hệ hoặc tạo issue.
+
+---
+
+**Sẵn sàng sử dụng!** 🚀

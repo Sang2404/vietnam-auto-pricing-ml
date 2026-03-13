@@ -1,14 +1,15 @@
 """
 Script huấn luyện mô hình dự đoán giá xe ô tô cũ
-Sử dụng Random Forest Regressor để dự đoán giá dựa trên các đặc trưng của xe
+So sánh 3 thuật toán: Random Forest, Gradient Boosting, XGBoost
 """
 
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import r2_score, mean_absolute_error
+from xgboost import XGBRegressor
 import joblib
 import warnings
 warnings.filterwarnings('ignore')
@@ -89,64 +90,115 @@ print(f"✓ Tập Test: {X_test.shape[0]} mẫu ({X_test.shape[0]/len(X)*100:.1f
 print(f"✓ Số features: {X_train.shape[1]}")
 
 # ============================================================================
-# 5. HUẤN LUYỆN MÔ HÌNH (RANDOM FOREST REGRESSOR)
+# 5. HUẤN LUYỆN 3 MÔ HÌNH
 # ============================================================================
 print("\n" + "=" * 70)
-print("BƯỚC 5: HUẤN LUYỆN MÔ HÌNH")
+print("BƯỚC 5: HUẤN LUYỆN 3 MÔ HÌNH")
 print("=" * 70)
 
-# Tạo và huấn luyện mô hình Random Forest
-model = RandomForestRegressor(
-    n_estimators=100,      # Số cây trong rừng
-    max_depth=20,          # Độ sâu tối đa của mỗi cây
-    min_samples_split=5,   # Số mẫu tối thiểu để chia một node
-    min_samples_leaf=2,    # Số mẫu tối thiểu ở leaf node
+models_dict = {}
+
+# Model 1: Random Forest Regressor
+print("\n🌲 Huấn luyện Random Forest Regressor...")
+rf_model = RandomForestRegressor(
+    n_estimators=100,
+    max_depth=20,
+    min_samples_split=5,
+    min_samples_leaf=2,
     random_state=42,
-    n_jobs=-1              # Sử dụng tất cả CPU cores
+    n_jobs=-1
 )
+rf_model.fit(X_train, y_train)
+models_dict['Random Forest'] = rf_model
+print("✓ Random Forest hoàn tất!")
 
-print("Đang huấn luyện mô hình...")
-model.fit(X_train, y_train)
-print("✓ Huấn luyện hoàn tất!")
+# Model 2: Gradient Boosting Regressor
+print("\n📈 Huấn luyện Gradient Boosting Regressor...")
+gb_model = GradientBoostingRegressor(
+    n_estimators=100,
+    learning_rate=0.1,
+    max_depth=5,
+    min_samples_split=5,
+    min_samples_leaf=2,
+    random_state=42
+)
+gb_model.fit(X_train, y_train)
+models_dict['Gradient Boosting'] = gb_model
+print("✓ Gradient Boosting hoàn tất!")
+
+# Model 3: XGBoost Regressor
+print("\n⚡ Huấn luyện XGBoost Regressor...")
+xgb_model = XGBRegressor(
+    n_estimators=100,
+    learning_rate=0.1,
+    max_depth=5,
+    min_child_weight=1,
+    random_state=42,
+    verbosity=0
+)
+xgb_model.fit(X_train, y_train)
+models_dict['XGBoost'] = xgb_model
+print("✓ XGBoost hoàn tất!")
 
 # ============================================================================
-# 6. ĐÁNH GIÁ MÔ HÌNH
+# 6. ĐÁNH GIÁ CẢ 3 MÔ HÌNH
 # ============================================================================
 print("\n" + "=" * 70)
-print("BƯỚC 6: ĐÁNH GIÁ MÔ HÌNH")
+print("BƯỚC 6: ĐÁNH GIÁ CẢ 3 MÔ HÌNH")
 print("=" * 70)
 
-# Dự đoán trên tập Train
-y_train_pred = model.predict(X_train)
-train_r2 = r2_score(y_train, y_train_pred)
-train_mae = mean_absolute_error(y_train, y_train_pred)
+models_performance = {}
 
-# Dự đoán trên tập Test
-y_test_pred = model.predict(X_test)
-test_r2 = r2_score(y_test, y_test_pred)
-test_mae = mean_absolute_error(y_test, y_test_pred)
+for model_name, model in models_dict.items():
+    print(f"\n{'='*50}")
+    print(f"📊 {model_name}")
+    print(f"{'='*50}")
+    
+    # Dự đoán trên tập Train
+    y_train_pred = model.predict(X_train)
+    train_r2 = r2_score(y_train, y_train_pred)
+    train_mae = mean_absolute_error(y_train, y_train_pred)
+    
+    # Dự đoán trên tập Test
+    y_test_pred = model.predict(X_test)
+    test_r2 = r2_score(y_test, y_test_pred)
+    test_mae = mean_absolute_error(y_test, y_test_pred)
+    
+    # Tính MAPE
+    mape = np.mean(np.abs((y_test - y_test_pred) / y_test)) * 100
+    
+    print(f"\n📈 KẾT QUẢ TRÊN TẬP TRAIN:")
+    print(f"   • R² Score: {train_r2:.4f}")
+    print(f"   • MAE: {train_mae:,.0f} VNĐ")
+    
+    print(f"\n📉 KẾT QUẢ TRÊN TẬP TEST:")
+    print(f"   • R² Score: {test_r2:.4f}")
+    print(f"   • MAE: {test_mae:,.0f} VNĐ")
+    print(f"   • MAPE: {mape:.2f}%")
+    
+    models_performance[model_name] = {
+        'train_r2': train_r2,
+        'train_mae': train_mae,
+        'test_r2': test_r2,
+        'test_mae': test_mae,
+        'mape': mape
+    }
 
-print(f"\n📊 KẾT QUẢ TRÊN TẬP TRAIN:")
-print(f"   • R² Score: {train_r2:.4f}")
-print(f"   • MAE (Mean Absolute Error): {train_mae:,.0f} VNĐ")
+# Tìm model tốt nhất dựa trên R² Score
+print(f"\n{'='*70}")
+print("🏆 SO SÁNH CÁC MÔ HÌNH")
+print(f"{'='*70}\n")
 
-print(f"\n📊 KẾT QUẢ TRÊN TẬP TEST:")
-print(f"   • R² Score: {test_r2:.4f}")
-print(f"   • MAE (Mean Absolute Error): {test_mae:,.0f} VNĐ")
+best_model_name = max(models_performance, key=lambda x: models_performance[x]['test_r2'])
+best_model = models_dict[best_model_name]
+best_performance = models_performance[best_model_name]
 
-# Tính MAPE (Mean Absolute Percentage Error) để đánh giá tốt hơn
-mape = np.mean(np.abs((y_test - y_test_pred) / y_test)) * 100
-print(f"   • MAPE (Mean Absolute Percentage Error): {mape:.2f}%")
+comparison_df = pd.DataFrame(models_performance).T
+print(comparison_df.to_string())
 
-# Hiển thị feature importance
-print(f"\n🎯 TẦM QUAN TRỌNG CỦA CÁC FEATURES:")
-feature_importance = pd.DataFrame({
-    'Feature': X.columns,
-    'Importance': model.feature_importances_
-}).sort_values('Importance', ascending=False)
-
-for idx, row in feature_importance.iterrows():
-    print(f"   • {row['Feature']}: {row['Importance']:.4f}")
+print(f"\n✨ MÔ HÌNH TỐT NHẤT: {best_model_name}")
+print(f"   • R² Score: {best_performance['test_r2']:.4f}")
+print(f"   • MAE: {best_performance['test_mae']:,.0f} VNĐ")
 
 # ============================================================================
 # 7. LƯU MÔ HÌNH VÀ ENCODER
@@ -155,9 +207,17 @@ print("\n" + "=" * 70)
 print("BƯỚC 7: LƯU MÔ HÌNH VÀ ENCODER")
 print("=" * 70)
 
-# Lưu mô hình
-joblib.dump(model, 'model.pkl')
-print("✓ Đã lưu mô hình: model.pkl")
+# Lưu tất cả 3 mô hình
+joblib.dump(models_dict, 'models.pkl')
+print("✓ Đã lưu cả 3 mô hình: models.pkl")
+
+# Lưu tên mô hình tốt nhất
+joblib.dump(best_model_name, 'best_model_name.pkl')
+print(f"✓ Đã lưu tên mô hình tốt nhất: best_model_name.pkl ({best_model_name})")
+
+# Lưu hiệu suất của tất cả mô hình
+joblib.dump(models_performance, 'models_performance.pkl')
+print("✓ Đã lưu hiệu suất các mô hình: models_performance.pkl")
 
 # Lưu các encoder
 joblib.dump(encoders, 'encoders.pkl')
@@ -168,7 +228,6 @@ joblib.dump(X.columns.tolist(), 'feature_columns.pkl')
 print("✓ Đã lưu danh sách features: feature_columns.pkl")
 
 # Lưu dữ liệu gốc đã xử lý để sử dụng trong web app
-# Tạo dataframe với dữ liệu gốc (chưa mã hóa) để lấy danh sách các giá trị
 df_raw = pd.read_csv('xe_cu.csv')
 if df_raw['Màu xe'].isnull().sum() > 0:
     color_mode = df_raw['Màu xe'].mode()[0]
@@ -184,22 +243,21 @@ training_info = {
     'test_size': len(X_test),
     'train_percentage': (len(X_train) / len(df)) * 100,
     'test_percentage': (len(X_test) / len(df)) * 100,
-    'train_r2': train_r2,
-    'test_r2': test_r2,
-    'train_mae': train_mae,
-    'test_mae': test_mae,
-    'mape': mape
+    'best_model': best_model_name,
+    'models_performance': models_performance
 }
 joblib.dump(training_info, 'training_info.pkl')
 print("✓ Đã lưu thông tin huấn luyện: training_info.pkl")
 
 print("\n" + "=" * 70)
-print("✅ HOÀN TẤT HUẤN LUYỆN MÔ HÌNH!")
+print("✅ HOÀN TẤT HUẤN LUYỆN 3 MÔ HÌNH!")
 print("=" * 70)
 print("\nCác file đã được lưu:")
-print("  1. model.pkl - Mô hình Random Forest")
-print("  2. encoders.pkl - Các bộ encoder cho dữ liệu dạng chữ")
-print("  3. feature_columns.pkl - Danh sách các features")
-print("  4. processed_data_raw.pkl - Dữ liệu gốc đã xử lý")
-print("  5. training_info.pkl - Thông tin huấn luyện")
+print("  1. models.pkl - Cả 3 mô hình (Random Forest, Gradient Boosting, XGBoost)")
+print("  2. best_model_name.pkl - Tên mô hình tốt nhất")
+print("  3. models_performance.pkl - Hiệu suất của cả 3 mô hình")
+print("  4. encoders.pkl - Các bộ encoder cho dữ liệu dạng chữ")
+print("  5. feature_columns.pkl - Danh sách các features")
+print("  6. processed_data_raw.pkl - Dữ liệu gốc đã xử lý")
+print("  7. training_info.pkl - Thông tin huấn luyện")
 print("\nBạn có thể sử dụng các file này trong ứng dụng web!")
