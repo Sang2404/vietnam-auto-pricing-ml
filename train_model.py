@@ -101,10 +101,10 @@ models_dict = {}
 # Model 1: Random Forest Regressor
 print("\n🌲 Huấn luyện Random Forest Regressor...")
 rf_model = RandomForestRegressor(
-    n_estimators=50,
-    max_depth=10,
-    min_samples_split=10,
-    min_samples_leaf=5,
+    n_estimators=100,
+    max_depth=15,
+    min_samples_split=5,
+    min_samples_leaf=2,
     random_state=42,
     n_jobs=-1
 )
@@ -115,11 +115,12 @@ print("✓ Random Forest hoàn tất!")
 # Model 2: Gradient Boosting Regressor
 print("\n📈 Huấn luyện Gradient Boosting Regressor...")
 gb_model = GradientBoostingRegressor(
-    n_estimators=100,
-    learning_rate=0.05,
-    max_depth=4,
-    min_samples_split=10,
-    min_samples_leaf=5,
+    n_estimators=200,
+    learning_rate=0.1,
+    max_depth=5,
+    min_samples_split=5,
+    min_samples_leaf=2,
+    subsample=0.8,
     random_state=42
 )
 gb_model.fit(X_train, y_train)
@@ -129,10 +130,12 @@ print("✓ Gradient Boosting hoàn tất!")
 # Model 3: XGBoost Regressor
 print("\n⚡ Huấn luyện XGBoost Regressor...")
 xgb_model = XGBRegressor(
-    n_estimators=100,
-    learning_rate=0.05,
-    max_depth=4,
-    min_child_weight=5,
+    n_estimators=200,
+    learning_rate=0.1,
+    max_depth=5,
+    min_child_weight=1,
+    subsample=0.8,
+    colsample_bytree=0.8,
     random_state=42,
     verbosity=0
 )

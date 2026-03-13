@@ -331,12 +331,27 @@ def main():
             predicted_price = best_model.predict(X_input)[0]
             predicted_price_rounded = round(predicted_price / 1_000_000) * 1_000_000
             
+            # Tính khoảng tin cậy (±10% từ dự đoán)
+            margin = predicted_price * 0.10
+            price_min = predicted_price - margin
+            price_max = predicted_price + margin
+            
+            # Lấy giá trung bình của xe cùng loại
+            same_model_prices = df_processed[
+                (df_processed['Hãng xe'] == selected_brand) & 
+                (df_processed['Dòng xe'] == selected_model)
+            ]['Giá (VNĐ)'].values
+            avg_market_price = np.mean(same_model_prices) if len(same_model_prices) > 0 else predicted_price
+            
             # Hiển thị kết quả
             st.markdown(f"""
                 <div class="result-card">
                     <div class="result-label">💰 Giá dự đoán của xe bạn:</div>
                     <div class="result-price">{predicted_price_rounded:,.0f}</div>
                     <div class="result-subtext">({predicted_price_rounded/1_000_000:.0f} triệu đồng)</div>
+                    <div style="font-size: 0.95em; color: #666; margin-top: 15px; font-weight: 500;">
+                        Khoảng giá dự kiến: {price_min/1_000_000:.0f} - {price_max/1_000_000:.0f} triệu đồng
+                    </div>
                     <div style="font-size: 1em; color: #0066cc; margin-top: 15px; font-weight: 600;">
                         Kết quả từ thuật toán: <strong>{best_model_name}</strong>
                     </div>
