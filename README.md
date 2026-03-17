@@ -68,14 +68,14 @@ XGBRegressor(n_estimators=200, learning_rate=0.1,
 
 | Thuật Toán | R² Score | MAE | MAPE |
 |---|---|---|---|
-| Linear Regression | 0.8234 | 156.2M VNĐ | 28.45% |
-| **Random Forest** ⭐ | **0.9763** | **53.1M VNĐ** | **10.22%** |
-| XGBoost | 0.9080 | 104.1M VNĐ | 20.15% |
+| Linear Regression | 0.0639 | 504M VNĐ | 72.01% |
+| **XGBoost** ⭐ | **0.9124** | **146M VNĐ** | **17.72%** |
+| Random Forest | 0.9014 | 150M VNĐ | 17.72% |
 
-**Model tốt nhất: Random Forest**
-- R² = 0.9763: Giải thích 97.63% phương sai giá xe
-- MAE = 53.1M VNĐ: Sai số trung bình chỉ ~53 triệu đồng
-- MAPE = 10.22%: Sai số phần trăm rất thấp
+**Model tốt nhất: XGBoost**
+- R² = 0.9124: Giải thích 91.24% phương sai giá xe
+- MAE = 146M VNĐ: Sai số trung bình ~146 triệu đồng
+- MAPE = 17.72%: Sai số phần trăm hợp lý
 
 ---
 
@@ -88,7 +88,7 @@ XGBRegressor(n_estimators=200, learning_rate=0.1,
 ├── visualize_models.py         # Trực quan hóa kết quả mô hình
 ├── visualize_algorithms.py     # Trực quan hóa 3 thuật toán
 ├── xe_cu.csv                   # Dữ liệu gốc
-├── model.pkl                   # Mô hình Random Forest
+├── model.pkl                   # Mô hình XGBoost
 ├── encoders.pkl                # Encoders cho mã hóa dữ liệu
 ├── feature_columns.pkl         # Danh sách các features
 ├── training_info.pkl           # Thông tin huấn luyện
@@ -145,9 +145,9 @@ python visualize_algorithms.py
 
 ## 🎯 Kết Luận
 
-✓ **Random Forest** là mô hình tốt nhất cho bài toán này
-- Độ chính xác cao (R² = 0.9763)
-- Sai số thấp (MAE = 53.1M VNĐ)
+✓ **XGBoost** là mô hình tốt nhất cho bài toán này
+- Độ chính xác cao (R² = 0.9124)
+- Sai số thấp (MAE = 146M VNĐ)
 - Phù hợp để triển khai trong thực tế
 
 ---

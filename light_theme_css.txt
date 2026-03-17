@@ -1,0 +1,401 @@
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+    
+    * {
+        font-family: 'Outfit', sans-serif;
+    }
+    
+    /* Main background - Light Theme */
+    .stApp {
+        background: linear-gradient(135deg, #f0f4f8 0%, #ffffff 50%, #e8f2f7 100%);
+        min-height: 100vh;
+    }
+    
+    /* Header section */
+    .hero-section {
+        text-align: center;
+        padding: 40px 20px 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(2, 132, 199, 0.08) 0%, transparent 50%);
+        animation: float 15s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(20px, 20px) rotate(5deg); }
+    }
+    
+    .hero-title {
+        font-size: 3.2em;
+        font-weight: 900;
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #16a34a 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
+        letter-spacing: -1px;
+        position: relative;
+        animation: slideUp 0.8s ease-out;
+    }
+    
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .hero-subtitle {
+        font-size: 1.05em;
+        color: #475569;
+        margin-top: 8px;
+        font-weight: 400;
+        letter-spacing: 0.5px;
+        position: relative;
+        animation: slideUp 0.8s ease-out 0.1s both;
+    }
+    
+    /* Glass card - Light Theme */
+    .glass-card {
+        background: #ffffff;
+        border: 2px solid #e0f2fe;
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 16px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+    }
+    
+    .glass-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #0284c7, transparent);
+    }
+    
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(2, 132, 199, 0.15);
+        border-color: #0284c7;
+    }
+    
+    /* Form title */
+    .section-title {
+        font-size: 1.6em;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    /* Custom HTML title inside glass-card */
+    .glass-card h3 {
+        font-size: 1.4em;
+        font-weight: 700;
+        color: #0284c7;
+        margin: 0 0 16px 0 !important;
+        padding: 0 !important;
+    }
+    
+    .section-title .icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #0284c7, #0369a1);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+        color: white;
+    }
+    
+    /* Input styling - Light Theme */
+    .stSelectbox > div > div {
+        background: #f8fafc !important;
+        border: 2px solid #e0f2fe !important;
+        border-radius: 12px !important;
+        color: #0f172a !important;
+        transition: all 0.3s ease;
+        min-height: 38px !important;
+    }
+    
+    .stSelectbox > div > div:hover {
+        border-color: #0284c7 !important;
+        box-shadow: 0 0 12px rgba(2, 132, 199, 0.2);
+    }
+    
+    .stSelectbox > div > div > div {
+        color: #0f172a !important;
+    }
+    
+    .stNumberInput > div > div {
+        background: #f8fafc !important;
+        border: 2px solid #e0f2fe !important;
+        border-radius: 12px !important;
+        min-height: 38px !important;
+    }
+    
+    .stNumberInput input {
+        color: #0f172a !important;
+    }
+    
+    /* Label styling - Light Theme */
+    .input-label {
+        font-size: 0.95em;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .input-label .step {
+        width: 24px;
+        height: 24px;
+        background: linear-gradient(135deg, #0284c7, #0369a1);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75em;
+        font-weight: 700;
+        color: white;
+    }
+    
+    /* Button styling - Ocean Blue */
+    .stButton > button {
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 16px !important;
+        padding: 14px 32px !important;
+        font-size: 1.05em !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 8px 16px rgba(2, 132, 199, 0.3) !important;
+        letter-spacing: 0.5px;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-3px) scale(1.02) !important;
+        box-shadow: 0 12px 24px rgba(2, 132, 199, 0.4) !important;
+    }
+    
+    /* Result card - Light Theme with Green */
+    .result-card {
+        background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+        border: 2px solid #22c55e;
+        border-radius: 24px;
+        padding: 32px 24px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        animation: glow 3s ease-in-out infinite;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 16px rgba(34, 197, 94, 0.15);
+    }
+    
+    @keyframes glow {
+        0%, 100% { box-shadow: 0 8px 16px rgba(34, 197, 94, 0.15); }
+        50% { box-shadow: 0 12px 24px rgba(34, 197, 94, 0.25); }
+    }
+    
+    .result-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, transparent 40%);
+    }
+    
+    .result-label {
+        font-size: 0.95em;
+        color: #475569;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    
+    .result-price {
+        font-size: 2.8em;
+        font-weight: 900;
+        color: #16a34a;
+        margin: 12px 0;
+        position: relative;
+    }
+    
+    .result-subtext {
+        font-size: 0.95em;
+        color: #64748b;
+        font-weight: 500;
+    }
+    
+    /* Stats cards - Light Theme */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .stat-card {
+        background: #f8fafc;
+        border: 2px solid #e0f2fe;
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        background: #f0f9ff;
+        border-color: #0284c7;
+    }
+    
+    .stat-number {
+        font-size: 1.5em;
+        font-weight: 800;
+        color: #0284c7;
+    }
+    
+    .stat-label {
+        font-size: 0.75em;
+        color: #64748b;
+        margin-top: 4px;
+        font-weight: 500;
+    }
+    
+    /* Info cards - Light Theme */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    
+    .info-card {
+        background: #f8fafc;
+        border: 2px solid #e0f2fe;
+        border-radius: 16px;
+        padding: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .info-card:hover {
+        background: #f0f9ff;
+        border-color: #0284c7;
+        transform: translateY(-2px);
+    }
+    
+    .info-label {
+        font-size: 0.7em;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+    
+    .info-value {
+        font-size: 0.95em;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    
+    /* Model info box - Light Theme */
+    .model-info {
+        background: #f0f9ff;
+        border-left: 4px solid #0284c7;
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+    
+    .model-info-title {
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 12px;
+        font-size: 1.05em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .model-info-text {
+        font-size: 0.9em;
+        color: #475569;
+        line-height: 1.8;
+    }
+    
+    .highlight {
+        color: #0284c7;
+        font-weight: 600;
+    }
+    
+    /* Divider - Light Theme */
+    .divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e0f2fe, transparent);
+        margin: 16px 0;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stats-grid, .info-grid {
+            grid-template-columns: 1fr;
+        }
+        .hero-title {
+            font-size: 2.5em;
+        }
+        .result-price {
+            font-size: 2.2em;
+        }
+    }
+    
+    /* Animation delays */
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    
+    /* Căn chỉnh chiều dọc 2 cột */
+    [data-testid="column"] {
+        margin-top: 0px !important;
+        padding-top: 0px !important;
+    }
+    
+    [data-testid="column"] > div {
+        margin-top: 0px !important;
+        padding-top: 0px !important;
+    }
+    
+    h3 {
+        margin-top: 0px !important;
+        padding-top: 0px !important;
+        margin-bottom: 16px !important;
+    }
+    
+    .glass-card {
+        margin-top: 0px !important;
+        padding-top: 24px !important;
+    }
+    </style>
+""", unsafe_allow_html=True)

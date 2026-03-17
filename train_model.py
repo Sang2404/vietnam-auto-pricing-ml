@@ -174,6 +174,13 @@ xgb_pred_test = xgb_model.predict(X_test)
 xgb_r2 = r2_score(y_test, xgb_pred_test)
 xgb_mae = mean_absolute_error(y_test, xgb_pred_test)
 xgb_rmse = np.sqrt(mean_squared_error(y_test, xgb_pred_test))
+
+# Tinh MAPE cho 3 mo hinh
+mask = y_test > 0
+lr_mape = np.mean(np.abs((y_test[mask] - lr_pred_test[mask]) / y_test[mask])) * 100
+rf_mape = np.mean(np.abs((y_test[mask] - rf_pred_test[mask]) / y_test[mask])) * 100
+xgb_mape = np.mean(np.abs((y_test[mask] - xgb_pred_test[mask]) / y_test[mask])) * 100
+
 print("✓ Huan luyen XGBoost hoan tat!")
 
 # ============================================================================
@@ -316,7 +323,12 @@ training_info = {
     'mape': mape,
     'overfitting_check': train_r2 - test_r2,
     'features': list(X.columns),
-    'best_model': best_model_name
+    'best_model': best_model_name,
+    'all_models': {
+        'Linear Regression': {'r2': lr_r2, 'mae': lr_mae, 'rmse': lr_rmse, 'mape': lr_mape},
+        'Random Forest': {'r2': rf_r2, 'mae': rf_mae, 'rmse': rf_rmse, 'mape': rf_mape},
+        'XGBoost': {'r2': xgb_r2, 'mae': xgb_mae, 'rmse': xgb_rmse, 'mape': xgb_mape}
+    }
 }
 joblib.dump(training_info, 'training_info.pkl')
 print("Da luu training_info.pkl")

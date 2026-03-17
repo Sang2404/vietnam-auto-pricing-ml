@@ -19,26 +19,26 @@ st.set_page_config(
 )
 
 # ============================================================================
-# CSS TÙYCHỈNH - PHONG CÁCH HIỆN ĐẠI PREMIUM
+# CSS TÙYCHỈNH - LIGHT THEME VỚI XANH BIỂN VÀ XANH LÁ CÂY
 # ============================================================================
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
     
     * {
-        font-family: 'Outfit', sans-serif;
+        font-family: 'Outfit', sans-serif !important;
     }
     
-    /* Main background */
+    /* Main background - Light Theme */
     .stApp {
-        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        background: linear-gradient(135deg, #f0f4f8 0%, #ffffff 50%, #e8f2f7 100%);
         min-height: 100vh;
     }
     
     /* Header section */
     .hero-section {
         text-align: center;
-        padding: 60px 20px 40px;
+        padding: 40px 20px 24px;
         position: relative;
         overflow: hidden;
     }
@@ -50,7 +50,7 @@ st.markdown("""
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+        background: radial-gradient(circle, rgba(2, 132, 199, 0.08) 0%, transparent 50%);
         animation: float 15s ease-in-out infinite;
     }
     
@@ -60,9 +60,9 @@ st.markdown("""
     }
     
     .hero-title {
-        font-size: 3.8em;
+        font-size: 3.2em;
         font-weight: 900;
-        background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #f472b6 100%);
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #16a34a 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -78,26 +78,26 @@ st.markdown("""
     }
     
     .hero-subtitle {
-        font-size: 1.25em;
-        color: #94a3b8;
-        margin-top: 16px;
+        font-size: 1.05em;
+        color: #1e293b;
+        margin-top: 8px;
         font-weight: 400;
         letter-spacing: 0.5px;
         position: relative;
         animation: slideUp 0.8s ease-out 0.1s both;
     }
     
-    /* Glass card */
+    /* Glass card - Light Theme */
     .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: #ffffff;
+        border: 2px solid #e0f2fe;
         border-radius: 24px;
-        padding: 32px;
-        margin-bottom: 24px;
+        padding: 24px;
+        margin-bottom: 16px;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
     }
     
     .glass-card::before {
@@ -106,125 +106,140 @@ st.markdown("""
         top: 0;
         left: 0;
         right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #0284c7, transparent);
     }
     
     .glass-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        border-color: rgba(129, 140, 248, 0.3);
+        box-shadow: 0 12px 24px rgba(2, 132, 199, 0.15);
+        border-color: #0284c7;
     }
     
     /* Form title */
     .section-title {
         font-size: 1.6em;
         font-weight: 700;
-        color: #f1f5f9;
-        margin-bottom: 28px;
+        color: #0f172a;
+        margin-bottom: 16px;
         display: flex;
         align-items: center;
         gap: 12px;
     }
     
+    /* Custom HTML title inside glass-card */
+    .glass-card h3 {
+        font-size: 1.4em;
+        font-weight: 700;
+        color: #0284c7;
+        margin: 0 0 16px 0 !important;
+        padding: 0 !important;
+    }
+    
     .section-title .icon {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, #818cf8, #c084fc);
+        background: linear-gradient(135deg, #0284c7, #0369a1);
         border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.2em;
+        color: white;
     }
     
-    /* Input styling */
+    /* Input styling - Light Theme */
     .stSelectbox > div > div {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background: #f8fafc !important;
+        border: 2px solid #e0f2fe !important;
         border-radius: 12px !important;
-        color: #f1f5f9 !important;
+        color: #0f172a !important;
         transition: all 0.3s ease;
+        min-height: 38px !important;
     }
     
     .stSelectbox > div > div:hover {
-        border-color: #818cf8 !important;
-        box-shadow: 0 0 20px rgba(129, 140, 248, 0.2);
+        border-color: #0284c7 !important;
+        box-shadow: 0 0 12px rgba(2, 132, 199, 0.2);
     }
     
     .stSelectbox > div > div > div {
-        color: #f1f5f9 !important;
+        color: #0f172a !important;
     }
     
     .stNumberInput > div > div {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background: #f8fafc !important;
+        border: 2px solid #e0f2fe !important;
         border-radius: 12px !important;
+        min-height: 38px !important;
     }
     
     .stNumberInput input {
-        color: #f1f5f9 !important;
+        color: #0f172a !important;
+        background: #f8fafc !important;
     }
     
-    /* Label styling */
+    /* Label styling - Light Theme */
     .input-label {
         font-size: 0.95em;
         font-weight: 600;
-        color: #cbd5e1;
-        margin-bottom: 10px;
+        color: #1e293b;
+        margin-bottom: 6px;
         display: flex;
         align-items: center;
         gap: 8px;
     }
     
     .input-label .step {
-        width: 28px;
-        height: 28px;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        border-radius: 8px;
+        width: 24px;
+        height: 24px;
+        background: linear-gradient(135deg, #0284c7, #0369a1);
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.8em;
+        font-size: 0.75em;
         font-weight: 700;
+        color: white;
     }
     
-    /* Button styling */
+    /* Button styling - Ocean Blue */
     .stButton > button {
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%) !important;
+        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
         color: white !important;
         border: none !important;
         border-radius: 16px !important;
-        padding: 18px 40px !important;
-        font-size: 1.15em !important;
+        padding: 14px 32px !important;
+        font-size: 1.05em !important;
         font-weight: 700 !important;
         cursor: pointer !important;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4) !important;
+        box-shadow: 0 8px 16px rgba(2, 132, 199, 0.3) !important;
         letter-spacing: 0.5px;
     }
     
     .stButton > button:hover {
         transform: translateY(-3px) scale(1.02) !important;
-        box-shadow: 0 16px 48px rgba(99, 102, 241, 0.5) !important;
+        box-shadow: 0 12px 24px rgba(2, 132, 199, 0.4) !important;
     }
     
-    /* Result card */
+    /* Result card - Light Theme with Green */
     .result-card {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%);
-        border: 2px solid rgba(129, 140, 248, 0.4);
-        backdrop-filter: blur(20px);
-        padding: 50px 40px;
+        background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+        border: 2px solid #22c55e;
         border-radius: 24px;
+        padding: 32px 24px;
         text-align: center;
         position: relative;
         overflow: hidden;
         animation: glow 3s ease-in-out infinite;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 16px rgba(34, 197, 94, 0.15);
     }
     
     @keyframes glow {
-        0%, 100% { box-shadow: 0 0 30px rgba(129, 140, 248, 0.2); }
-        50% { box-shadow: 0 0 50px rgba(129, 140, 248, 0.4); }
+        0%, 100% { box-shadow: 0 8px 16px rgba(34, 197, 94, 0.15); }
+        50% { box-shadow: 0 12px 24px rgba(34, 197, 94, 0.25); }
     }
     
     .result-card::before {
@@ -234,111 +249,105 @@ st.markdown("""
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(129, 140, 248, 0.1) 0%, transparent 40%);
+        background: radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, transparent 40%);
     }
     
     .result-label {
-        font-size: 1.1em;
-        color: #94a3b8;
+        font-size: 0.95em;
+        color: #1e293b;
         font-weight: 500;
-        margin-bottom: 16px;
+        margin-bottom: 8px;
     }
     
     .result-price {
-        font-size: 4em;
+        font-size: 2.8em;
         font-weight: 900;
-        background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #f472b6 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin: 20px 0;
+        color: #16a34a;
+        margin: 12px 0;
         position: relative;
     }
     
     .result-subtext {
-        font-size: 1.1em;
-        color: #64748b;
+        font-size: 0.95em;
+        color: #1e293b;
         font-weight: 500;
     }
     
-    /* Stats cards */
+    /* Stats cards - Light Theme */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-        margin-bottom: 24px;
+        gap: 12px;
+        margin-bottom: 16px;
     }
     
     .stat-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: #f8fafc;
+        border: 2px solid #e0f2fe;
         border-radius: 16px;
-        padding: 20px;
+        padding: 16px;
         text-align: center;
         transition: all 0.3s ease;
     }
     
     .stat-card:hover {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(129, 140, 248, 0.3);
+        background: #f0f9ff;
+        border-color: #0284c7;
     }
     
     .stat-number {
-        font-size: 1.8em;
+        font-size: 1.5em;
         font-weight: 800;
-        background: linear-gradient(135deg, #818cf8, #c084fc);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: #0284c7;
     }
     
     .stat-label {
-        font-size: 0.85em;
-        color: #64748b;
-        margin-top: 6px;
+        font-size: 0.75em;
+        color: #1e293b;
+        margin-top: 4px;
         font-weight: 500;
     }
     
-    /* Info cards */
+    /* Info cards - Light Theme */
     .info-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
+        gap: 12px;
     }
     
     .info-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: #f8fafc;
+        border: 2px solid #e0f2fe;
         border-radius: 16px;
-        padding: 20px;
+        padding: 14px;
         transition: all 0.3s ease;
     }
     
     .info-card:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(129, 140, 248, 0.2);
+        background: #f0f9ff;
+        border-color: #0284c7;
         transform: translateY(-2px);
     }
     
     .info-label {
-        font-size: 0.8em;
-        color: #64748b;
+        font-size: 0.7em;
+        color: #1e293b;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
     }
     
     .info-value {
-        font-size: 1.15em;
+        font-size: 0.95em;
         font-weight: 700;
-        color: #f1f5f9;
+        color: #0f172a;
     }
     
-    /* Model info box */
+    /* Model info box - Light Theme */
     .model-info {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
-        border-left: 4px solid #818cf8;
+        background: #f0f9ff;
+        border-left: 4px solid #0284c7;
         padding: 20px;
         border-radius: 12px;
         margin-top: 20px;
@@ -346,7 +355,7 @@ st.markdown("""
     
     .model-info-title {
         font-weight: 700;
-        color: #f1f5f9;
+        color: #0f172a;
         margin-bottom: 12px;
         font-size: 1.05em;
         display: flex;
@@ -356,20 +365,20 @@ st.markdown("""
     
     .model-info-text {
         font-size: 0.9em;
-        color: #94a3b8;
+        color: #1e293b;
         line-height: 1.8;
     }
     
     .highlight {
-        color: #818cf8;
+        color: #0284c7;
         font-weight: 600;
     }
     
-    /* Divider */
+    /* Divider - Light Theme */
     .divider {
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-        margin: 30px 0;
+        background: linear-gradient(90deg, transparent, #e0f2fe, transparent);
+        margin: 16px 0;
     }
     
     /* Responsive */
@@ -381,7 +390,7 @@ st.markdown("""
             font-size: 2.5em;
         }
         .result-price {
-            font-size: 2.8em;
+            font-size: 2.2em;
         }
     }
     
@@ -390,13 +399,41 @@ st.markdown("""
     .delay-2 { animation-delay: 0.2s; }
     .delay-3 { animation-delay: 0.3s; }
     .delay-4 { animation-delay: 0.4s; }
+    
+    /* Căn chỉnh chiều dọc 2 cột */
+    [data-testid="column"] {
+        margin-top: 0px !important;
+        padding-top: 0px !important;
+    }
+    
+    [data-testid="column"] > div {
+        margin-top: 0px !important;
+        padding-top: 0px !important;
+    }
+    
+    h3 {
+        margin-top: 0px !important;
+        padding-top: 0px !important;
+        margin-bottom: 16px !important;
+        font-family: 'Outfit', sans-serif !important;
+    }
+    
+    .glass-card {
+        margin-top: 0px !important;
+        padding-top: 24px !important;
+        font-family: 'Outfit', sans-serif !important;
+    }
+    
+    button, input, select, textarea {
+        font-family: 'Outfit', sans-serif !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # ============================================================================
 # HÀM LOAD MÔ HÌNH VÀ ENCODER
 # ============================================================================
-@st.cache_resource
+@st.cache_resource(ttl=3600)  # Cache 1 giờ
 def load_model_and_encoders():
     """Load mô hình và encoders từ file .pkl"""
     try:
@@ -479,10 +516,7 @@ def main():
     with col_left:
         st.markdown("""
             <div class="glass-card">
-                <div class="section-title">
-                    <span class="icon">📝</span>
-                    Thông tin xe của bạn
-                </div>
+                <h3>📝 Nhập thông tin xe</h3>
         """, unsafe_allow_html=True)
         
         # 1. Hãng xe
@@ -598,44 +632,15 @@ def main():
         
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # ========== CỘT PHẢI: THÔNG TIN MÔ HÌNH ==========
+    # ========== CỘT PHẢI: NÚT DỰ ĐOÁN + KẾT QUẢ ==========
     with col_right:
         st.markdown("""
             <div class="glass-card">
-                <div class="section-title">
-                    <span class="icon">🤖</span>
-                    Thông tin mô hình
-                </div>
+                <h3>🎯 Kết quả dự đoán</h3>
         """, unsafe_allow_html=True)
         
-        # Stats
-        st.markdown(f"""
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">{training_info['total_data']:,}</div>
-                    <div class="stat-label">Tổng dữ liệu</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">{training_info['train_size']:,}</div>
-                    <div class="stat-label">Training</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">{training_info['test_size']:,}</div>
-                    <div class="stat-label">Testing</div>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-        
-
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    # ========== NÚT DỰ ĐOÁN ==========
-    st.markdown('<br>', unsafe_allow_html=True)
-    
-    col_btn = st.columns([1, 1, 1])
-    with col_btn[1]:
-        if st.button("🔮 Dự đoán ngay", use_container_width=True, type="primary"):
+        # NÚT DỰ ĐOÁN
+        if st.button("Dự đoán ngay", use_container_width=True, type="primary"):
             # Chuẩn bị dữ liệu
             input_data = {
                 'Hãng xe': selected_brand,
@@ -673,17 +678,23 @@ def main():
             # Hiển thị kết quả
             st.markdown(f"""
                 <div class="result-card">
-                    <div class="result-label">💰 Giá dự đoán của xe bạn:</div>
-                    <div class="result-price">{predicted_price_rounded:,.0f} ₫</div>
-                    <div class="result-subtext">{predicted_price_rounded/1_000_000:.0f} triệu đồng</div>
+                    <div class="result-price">{predicted_price_rounded:,.0f} VNĐ</div>
                 </div>
             """, unsafe_allow_html=True)
             
             # Chi tiết
             st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
             
+            # Thông tin xe dạng text để dễ copy
+            car_info_text = f"{selected_brand} {selected_model} {selected_version} {selected_year}"
+            st.markdown(f"""
+                <div style="background: #f8fafc; border: 2px solid #e0f2fe; border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; font-family: 'Courier New', monospace; font-size: 0.95em; color: #0f172a; word-break: break-all; cursor: pointer;" title="Click để copy">
+                    {car_info_text}
+                </div>
+            """, unsafe_allow_html=True)
+            
             st.markdown("""
-                <div style="font-size: 1.3em; font-weight: 700; color: #f1f5f9; margin-bottom: 20px;">
+                <div style="font-size: 1.1em; font-weight: 700; color: #0f172a; margin-bottom: 12px;">
                     📋 Chi tiết xe
                 </div>
             """, unsafe_allow_html=True)
@@ -697,13 +708,13 @@ def main():
                     </div>
                 """, unsafe_allow_html=True)
                 st.markdown(f"""
-                    <div class="info-card" style="margin-top: 12px;">
+                    <div class="info-card" style="margin-top: 8px;">
                         <div class="info-label">Dòng xe</div>
                         <div class="info-value">{selected_model}</div>
                     </div>
                 """, unsafe_allow_html=True)
                 st.markdown(f"""
-                    <div class="info-card" style="margin-top: 12px;">
+                    <div class="info-card" style="margin-top: 8px;">
                         <div class="info-label">Đời xe</div>
                         <div class="info-value">{selected_year}</div>
                     </div>
@@ -717,13 +728,13 @@ def main():
                     </div>
                 """, unsafe_allow_html=True)
                 st.markdown(f"""
-                    <div class="info-card" style="margin-top: 12px;">
+                    <div class="info-card" style="margin-top: 8px;">
                         <div class="info-label">Màu xe</div>
                         <div class="info-value">{selected_color}</div>
                     </div>
                 """, unsafe_allow_html=True)
                 st.markdown(f"""
-                    <div class="info-card" style="margin-top: 12px;">
+                    <div class="info-card" style="margin-top: 8px;">
                         <div class="info-label">Xuất xứ</div>
                         <div class="info-value">{selected_import}</div>
                     </div>
@@ -737,19 +748,97 @@ def main():
                     </div>
                 """, unsafe_allow_html=True)
                 st.markdown(f"""
-                    <div class="info-card" style="margin-top: 12px;">
+                    <div class="info-card" style="margin-top: 8px;">
                         <div class="info-label">Công tơ mét</div>
                         <div class="info-value">{mileage:,} km</div>
                     </div>
                 """, unsafe_allow_html=True)
                 st.markdown(f"""
-                    <div class="info-card" style="margin-top: 12px;">
+                    <div class="info-card" style="margin-top: 8px;">
                         <div class="info-label">Tuổi xe</div>
                         <div class="info-value">{car_age} năm</div>
                     </div>
                 """, unsafe_allow_html=True)
-            
-            st.markdown('<br>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # ========== FOOTER: THÔNG TIN DỮ LIỆU ==========
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+    
+    col_data1, col_data2, col_data3 = st.columns(3)
+    with col_data1:
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-label">Tổng dữ liệu</div>
+                <div class="info-value">{training_info['total_data']:,}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with col_data2:
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-label">Dữ liệu Train</div>
+                <div class="info-value">{training_info['train_size']:,}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with col_data3:
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-label">Dữ liệu Test</div>
+                <div class="info-value">{training_info['test_size']:,}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # So sánh 3 mô hình
+    st.markdown("""
+        <div style="font-size: 0.95em; color: #0f172a; font-weight: 600; margin-top: 20px; margin-bottom: 12px;">⚖️ So sánh 3 mô hình:</div>
+    """, unsafe_allow_html=True)
+    
+    all_models = training_info.get('all_models', {})
+    
+    # Hiển thị bảng so sánh
+    col_m1, col_m2, col_m3 = st.columns(3)
+    
+    # Linear Regression
+    with col_m1:
+        lr_data = all_models.get('Linear Regression', {})
+        st.markdown(f"""
+            <div style="background: #f8fafc; border: 2px solid #e0f2fe; border-radius: 12px; padding: 12px;">
+                <div style="font-size: 0.85em; color: #0284c7; font-weight: 600; margin-bottom: 8px; text-align: center;">Linear Regression</div>
+                <div style="font-size: 0.8em; color: #1e293b; line-height: 1.8;">
+                    <div>R²: <span style="color: #0f172a; font-weight: 600;">{lr_data.get('r2', 0):.4f}</span></div>
+                    <div>MAE: <span style="color: #0f172a; font-weight: 600;">{lr_data.get('mae', 0)/1_000_000:.0f}M</span></div>
+                    <div>MAPE: <span style="color: #0f172a; font-weight: 600;">{lr_data.get('mape', 0):.2f}%</span></div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # Random Forest
+    with col_m2:
+        rf_data = all_models.get('Random Forest', {})
+        st.markdown(f"""
+            <div style="background: #f8fafc; border: 2px solid #e0f2fe; border-radius: 12px; padding: 12px;">
+                <div style="font-size: 0.85em; color: #0284c7; font-weight: 600; margin-bottom: 8px; text-align: center;">Random Forest</div>
+                <div style="font-size: 0.8em; color: #1e293b; line-height: 1.8;">
+                    <div>R²: <span style="color: #0f172a; font-weight: 600;">{rf_data.get('r2', 0):.4f}</span></div>
+                    <div>MAE: <span style="color: #0f172a; font-weight: 600;">{rf_data.get('mae', 0)/1_000_000:.0f}M</span></div>
+                    <div>MAPE: <span style="color: #0f172a; font-weight: 600;">{rf_data.get('mape', 0):.2f}%</span></div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # XGBoost
+    with col_m3:
+        xgb_data = all_models.get('XGBoost', {})
+        st.markdown(f"""
+            <div style="background: #f8fafc; border: 2px solid #e0f2fe; border-radius: 12px; padding: 12px;">
+                <div style="font-size: 0.85em; color: #0284c7; font-weight: 600; margin-bottom: 8px; text-align: center;">🏆 XGBoost</div>
+                <div style="font-size: 0.8em; color: #1e293b; line-height: 1.8;">
+                    <div>R²: <span style="color: #0f172a; font-weight: 600;">{xgb_data.get('r2', 0):.4f}</span></div>
+                    <div>MAE: <span style="color: #0f172a; font-weight: 600;">{xgb_data.get('mae', 0)/1_000_000:.0f}M</span></div>
+                    <div>MAPE: <span style="color: #0f172a; font-weight: 600;">{xgb_data.get('mape', 0):.2f}%</span></div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
