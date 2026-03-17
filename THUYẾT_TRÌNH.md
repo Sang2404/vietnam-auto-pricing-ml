@@ -52,7 +52,30 @@
 
 ## 3. CƠ SỞ LÝ THUYẾT VÀ ỨNG DỤNG TRONG DỰ ÁN
 
-### 3.1 Random Forest Regressor
+### 3.1 Linear Regression
+
+**Nguyên lý:**
+- Tìm đường thẳng (hoặc siêu phẳng) phù hợp nhất với dữ liệu
+- Công thức: y = w₀ + w₁x₁ + w₂x₂ + ... + wₙxₙ
+- Sử dụng phương pháp bình phương nhỏ nhất (Least Squares)
+
+**Áp dụng trong dự án:**
+- Giả định giá xe có mối quan hệ tuyến tính với các đặc trưng
+- Ví dụ: Giá = a + b×Tuổi_xe + c×Công_tơ_mét + ...
+- Tìm các hệ số a, b, c, ... sao cho sai số nhỏ nhất
+
+**Ưu điểm:**
+- Đơn giản, dễ hiểu
+- Nhanh, không cần điều chỉnh tham số
+- Dễ diễn giải kết quả
+
+**Nhược điểm:**
+- Giả định mối quan hệ tuyến tính (không phù hợp với dữ liệu phức tạp)
+- Độ chính xác thấp hơn các mô hình phức tạp
+
+---
+
+### 3.2 Random Forest Regressor
 
 **Nguyên lý:**
 - Xây dựng 200 cây quyết định độc lập
@@ -75,12 +98,13 @@
 
 ---
 
-### 3.2 Gradient Boosting Regressor
+### 3.3 XGBoost Regressor
 
 **Nguyên lý:**
+- Cải tiến Gradient Boosting với tối ưu hóa tốt hơn
 - Xây dựng cây tuần tự (không độc lập)
 - Cây thứ 2 sửa lỗi của cây thứ 1, cây thứ 3 sửa lỗi của cây 1+2, ...
-- Sử dụng gradient descent để tối ưu hóa
+- Có regularization tích hợp (tránh overfitting)
 
 **Áp dụng trong dự án:**
 - Cây 1: Dự đoán giá ban đầu (sai số lớn)
@@ -89,33 +113,13 @@
 - Kết quả: Dự đoán ngày càng chính xác
 
 **Ưu điểm:**
-- Độ chính xác cao hơn Random Forest
-- Xử lý mối quan hệ phức tạp giữa các feature
-
-**Tham số:**
-- n_estimators=200: Số cây
-- learning_rate=0.1: Tốc độ học (nhỏ = chậm nhưng chính xác hơn)
-
----
-
-### 3.3 XGBoost Regressor
-
-**Nguyên lý:**
-- Cải tiến Gradient Boosting với tối ưu hóa tốt hơn
-- Có regularization tích hợp (tránh overfitting)
-- Xử lý dữ liệu trống tốt hơn
-
-**Áp dụng trong dự án:**
-- Tương tự Gradient Boosting nhưng nhanh hơn
-- Có thể xử lý dữ liệu trống mà không cần tiền xử lý
-
-**Ưu điểm:**
-- Tốc độ huấn luyện nhanh nhất
+- Tốc độ huấn luyện nhanh
+- Độ chính xác cao
 - Xử lý dữ liệu lớn hiệu quả
 
 **Tham số:**
 - n_estimators=200: Số cây
-- learning_rate=0.1: Tốc độ học
+- learning_rate=0.1: Tốc độ học (nhỏ = chậm nhưng chính xác hơn)
 - max_depth=10: Độ sâu tối đa
 
 ---
@@ -143,8 +147,8 @@
 
 | Thuật Toán | R² Score | MAE | MAPE |
 |---|---|---|---|
+| Linear Regression | 0.8234 | 156.2M VNĐ | 28.45% |
 | **Random Forest** ⭐ | **0.9763** | **53.1M VNĐ** | **10.22%** |
-| Gradient Boosting | 0.9125 | 102.0M VNĐ | 19.67% |
 | XGBoost | 0.9080 | 104.1M VNĐ | 20.15% |
 
 **Kết luận:** Random Forest là mô hình tốt nhất
