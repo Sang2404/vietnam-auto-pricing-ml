@@ -1,6 +1,10 @@
 [client]
 showErrorDetails = true
 
+[theme]
+base = "light"
+primaryColor = "#0284c7"
+
 [logger]
 level = "info"
 

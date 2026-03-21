@@ -494,6 +494,30 @@ def get_unique_values(df, col):
     values = [c for c in df[col].unique().tolist() if pd.notna(c)]
     return sorted(values)
 
+def find_closest_match(value, known_values):
+    """Tìm giá trị gần nhất trong danh sách đã biết"""
+    import difflib
+    value_str = str(value).strip()
+    known_str = [str(v) for v in known_values]
+    matches = difflib.get_close_matches(value_str, known_str, n=1, cutoff=0.3)
+    if matches:
+        return matches[0]
+    return known_str[0] if known_str else value_str
+
+def safe_encode(encoders, col, value):
+    """Mã hóa giá trị, tìm giá trị gần nhất nếu không tồn tại"""
+    if col not in encoders or col == 'mapping_tinh_trang':
+        return value, value, False
+    le = encoders[col]
+    known = list(le.classes_)
+    if str(value) in [str(k) for k in known]:
+        encoded = le.transform([value])[0]
+        return encoded, value, False
+    else:
+        closest = find_closest_match(value, known)
+        encoded = le.transform([closest])[0]
+        return encoded, closest, True
+
 # ============================================================================
 # MAIN APP
 # ============================================================================
@@ -519,112 +543,64 @@ def main():
                 <h3>📝 Nhập thông tin xe</h3>
         """, unsafe_allow_html=True)
         
-        # 1. Hãng xe
-        st.markdown('<div class="input-label"><span class="step">1</span>Hãng xe</div>', unsafe_allow_html=True)
-        brands = get_unique_values(df_processed, 'Hãng xe')
-        selected_brand = st.selectbox(
-            "Chọn hãng xe",
-            brands,
-            key="brand",
-            label_visibility="collapsed"
-        )
+        # Toggle chế độ nhập
+        input_mode = st.toggle("✏️ Chế độ nhập tay (cho xe không có trong danh sách)", value=False, key="input_mode")
         
-        # 2. Dòng xe (lọc theo Hãng xe)
-        st.markdown('<div class="input-label"><span class="step">2</span>Dòng xe</div>', unsafe_allow_html=True)
-        models = get_unique_values_filtered(
-            df_processed, 
-            'Dòng xe', 
-            {'Hãng xe': selected_brand}
-        )
-        selected_model = st.selectbox(
-            "Chọn dòng xe",
-            models,
-            key="model",
-            label_visibility="collapsed"
-        )
+        if not input_mode:
+            # ===== CHẾ ĐỘ CHỌN TỪ DANH SÁCH =====
+            st.markdown('<div class="input-label"><span class="step">1</span>Hãng xe</div>', unsafe_allow_html=True)
+            brands = get_unique_values(df_processed, 'Hãng xe')
+            selected_brand = st.selectbox("Chọn hãng xe", brands, key="brand", label_visibility="collapsed")
+            
+            st.markdown('<div class="input-label"><span class="step">2</span>Dòng xe</div>', unsafe_allow_html=True)
+            models = get_unique_values_filtered(df_processed, 'Dòng xe', {'Hãng xe': selected_brand})
+            selected_model = st.selectbox("Chọn dòng xe", models, key="model", label_visibility="collapsed")
+            
+            st.markdown('<div class="input-label"><span class="step">3</span>Đời xe (Năm sản xuất)</div>', unsafe_allow_html=True)
+            years = get_unique_values_filtered(df_processed, 'Đời xe', {'Hãng xe': selected_brand, 'Dòng xe': selected_model})
+            selected_year = st.selectbox("Chọn đời xe", years, key="year", label_visibility="collapsed")
+            
+            st.markdown('<div class="input-label"><span class="step">4</span>Phiên bản</div>', unsafe_allow_html=True)
+            versions = get_unique_values_filtered(df_processed, 'Phiên bản', {'Hãng xe': selected_brand, 'Dòng xe': selected_model, 'Đời xe': selected_year})
+            selected_version = st.selectbox("Chọn phiên bản", versions, key="version", label_visibility="collapsed")
+            
+            st.markdown('<div class="input-label"><span class="step">5</span>Màu xe</div>', unsafe_allow_html=True)
+            colors = get_unique_values_filtered(df_processed, 'Màu xe', {'Hãng xe': selected_brand, 'Dòng xe': selected_model, 'Đời xe': selected_year, 'Phiên bản': selected_version})
+            selected_color = st.selectbox("Chọn màu xe", colors, key="color", label_visibility="collapsed")
+            
+            st.markdown('<div class="input-label"><span class="step">6</span>Xuất xứ / Nhập khẩu</div>', unsafe_allow_html=True)
+            imports = get_unique_values(df_processed, 'Nhập khẩu')
+            selected_import = st.selectbox("Chọn xuất xứ", imports, key="import", label_visibility="collapsed")
+        else:
+            # ===== CHẾ ĐỘ NHẬP TAY =====
+            st.markdown('<div class="input-label"><span class="step">1</span>Hãng xe (nhập tay)</div>', unsafe_allow_html=True)
+            selected_brand = st.text_input("Nhập hãng xe", value="Toyota", key="brand_manual", label_visibility="collapsed", placeholder="Ví dụ: Toyota, Honda, VinFast...")
+            
+            st.markdown('<div class="input-label"><span class="step">2</span>Dòng xe (nhập tay)</div>', unsafe_allow_html=True)
+            selected_model = st.text_input("Nhập dòng xe", value="Camry", key="model_manual", label_visibility="collapsed", placeholder="Ví dụ: Camry, City, Lux A2.0...")
+            
+            st.markdown('<div class="input-label"><span class="step">3</span>Đời xe (Năm sản xuất)</div>', unsafe_allow_html=True)
+            selected_year = st.number_input("Nhập đời xe", min_value=2000, max_value=2026, value=2020, step=1, key="year_manual", label_visibility="collapsed")
+            
+            st.markdown('<div class="input-label"><span class="step">4</span>Phiên bản (nhập tay)</div>', unsafe_allow_html=True)
+            selected_version = st.text_input("Nhập phiên bản", value="AT", key="version_manual", label_visibility="collapsed", placeholder="Ví dụ: AT, MT, LUX, S...")
+            
+            st.markdown('<div class="input-label"><span class="step">5</span>Màu xe (nhập tay)</div>', unsafe_allow_html=True)
+            selected_color = st.text_input("Nhập màu xe", value="Trắng", key="color_manual", label_visibility="collapsed", placeholder="Ví dụ: Trắng, Đen, Bạc...")
+            
+            st.markdown('<div class="input-label"><span class="step">6</span>Xuất xứ / Nhập khẩu (nhập tay)</div>', unsafe_allow_html=True)
+            selected_import = st.text_input("Nhập xuất xứ", value="Trong nước", key="import_manual", label_visibility="collapsed", placeholder="Ví dụ: Trong nước, Nhập khẩu...")
         
-        # 3. Đời xe (lọc theo Hãng xe + Dòng xe)
-        st.markdown('<div class="input-label"><span class="step">3</span>Đời xe (Năm sản xuất)</div>', unsafe_allow_html=True)
-        years = get_unique_values_filtered(
-            df_processed,
-            'Đời xe',
-            {'Hãng xe': selected_brand, 'Dòng xe': selected_model}
-        )
-        selected_year = st.selectbox(
-            "Chọn đời xe",
-            years,
-            key="year",
-            label_visibility="collapsed"
-        )
-        
-        # 4. Phiên bản (lọc theo Hãng xe + Dòng xe + Đời xe)
-        st.markdown('<div class="input-label"><span class="step">4</span>Phiên bản</div>', unsafe_allow_html=True)
-        versions = get_unique_values_filtered(
-            df_processed,
-            'Phiên bản',
-            {'Hãng xe': selected_brand, 'Dòng xe': selected_model, 'Đời xe': selected_year}
-        )
-        selected_version = st.selectbox(
-            "Chọn phiên bản",
-            versions,
-            key="version",
-            label_visibility="collapsed"
-        )
-        
-        # 5. Màu xe (lọc theo Hãng xe + Dòng xe + Đời xe + Phiên bản)
-        st.markdown('<div class="input-label"><span class="step">5</span>Màu xe</div>', unsafe_allow_html=True)
-        colors = get_unique_values_filtered(
-            df_processed,
-            'Màu xe',
-            {
-                'Hãng xe': selected_brand,
-                'Dòng xe': selected_model,
-                'Đời xe': selected_year,
-                'Phiên bản': selected_version
-            }
-        )
-        selected_color = st.selectbox(
-            "Chọn màu xe",
-            colors,
-            key="color",
-            label_visibility="collapsed"
-        )
-        
-        # 6. Nhập khẩu
-        st.markdown('<div class="input-label"><span class="step">6</span>Xuất xứ / Nhập khẩu</div>', unsafe_allow_html=True)
-        imports = get_unique_values(df_processed, 'Nhập khẩu')
-        selected_import = st.selectbox(
-            "Chọn xuất xứ",
-            imports,
-            key="import",
-            label_visibility="collapsed"
-        )
-        
-        # 7. Tình trạng
+        # 7. Tình trạng (luôn dùng selectbox vì chỉ có 3 giá trị cố định)
         st.markdown('<div class="input-label"><span class="step">7</span>Tình trạng</div>', unsafe_allow_html=True)
         conditions = get_unique_values(df_processed, 'Tình trạng')
-        
-        # LỌC BỎ "Mới": Chỉ giữ "Tốt", "Rất tốt", "Trung bình"
         if 'Mới' in conditions:
             conditions.remove('Mới')
-            
-        selected_condition = st.selectbox(
-            "Chọn tình trạng",
-            conditions,
-            key="condition",
-            label_visibility="collapsed"
-        )
+        selected_condition = st.selectbox("Chọn tình trạng", conditions, key="condition", label_visibility="collapsed")
         
         # 8. Công tơ mét
         st.markdown('<div class="input-label"><span class="step">8</span>Công tơ mét (km)</div>', unsafe_allow_html=True)
-        mileage = st.number_input(
-            "Nhập số km đã chạy",
-            min_value=0,
-            max_value=500000,
-            value=50000,
-            step=1000,
-            label_visibility="collapsed"
-        )
+        mileage = st.number_input("Nhập số km đã chạy", min_value=0, max_value=500000, value=50000, step=1000, label_visibility="collapsed")
         
         # Tính tuổi xe tự động
         current_year = 2026
@@ -654,22 +630,32 @@ def main():
                 'Tuổi xe': car_age
             }
             
-            # Mã hóa
+            # Mã hóa (hỗ trợ giá trị mới không có trong dữ liệu huấn luyện)
             encoded_data = {}
+            warnings_list = []
             
-            # Mapping thủ công cho Tình trạng
             mapping_tinh_trang = {'Trung bình': 1, 'Tốt': 2, 'Rất tốt': 3, 'Mới': 4}
             
             for col, value in input_data.items():
                 if col == 'Tình trạng':
-                    # Sử dụng mapping thủ công cho Tình trạng
                     encoded_data[col] = mapping_tinh_trang.get(value, 1)
                 elif col in encoders and col != 'mapping_tinh_trang':
-                    # Sử dụng LabelEncoder cho các cột khác
-                    encoded_data[col] = encoders[col].transform([value])[0]
+                    enc_val, matched_val, was_unknown = safe_encode(encoders, col, value)
+                    encoded_data[col] = enc_val
+                    if was_unknown:
+                        warnings_list.append(f"⚠️ '{value}' ({col}) → dùng giá trị gần nhất: '{matched_val}'")
                 else:
-                    # Giữ nguyên giá trị số
                     encoded_data[col] = value
+            
+            # Hiển thị cảnh báo nếu có giá trị mới
+            if warnings_list:
+                warning_items = ''.join([f'<div style="color:#92400E;font-size:0.9em;margin:4px 0;">{w}</div>' for w in warnings_list])
+                st.markdown(f'''
+                    <div style="background:#FEF3C7;border:1px solid #F59E0B;border-radius:12px;padding:12px 16px;margin-bottom:12px;">
+                        <div style="color:#92400E;font-weight:700;font-size:0.95em;margin-bottom:6px;">🔍 Một số giá trị không có trong dữ liệu huấn luyện, đã tự động tìm giá trị gần nhất:</div>
+                        {warning_items}
+                    </div>
+                ''', unsafe_allow_html=True)
             
             X_input = pd.DataFrame([encoded_data])[feature_columns]
             predicted_price = model.predict(X_input)[0]
